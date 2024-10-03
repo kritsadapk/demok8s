@@ -1,0 +1,40 @@
+# what is rolling update ?
+# https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update
+# มันคือ deployment ตัวนึง 
+# เราจะเปลี่ยน app ยังไงไม่ให้ล่ม มีการเปลี่ยนแปลงแบบค่อยๆ ลด ค่อยๆ เพิ่ม
+# สาถิตจากการเปลี่ยนจาก nginx เป็น httpd 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: demok8s
+  labels:
+    app: nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1 # จำนวน pods ที่ต้องการ สร้างขึ้นเมื่อมีการ update 
+      maxUnavailable: 1 # จำนวน pods ที่จถะถูกลบออกเมื่อมีการ update
+  template:
+    metadata:
+      labels:
+        app: nginx # ถอดออก 
+    spec:
+      containers:
+      - name: httpd # change nginx to httpd (apache server)
+        image: httpd
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi

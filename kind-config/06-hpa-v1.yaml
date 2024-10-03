@@ -1,0 +1,20 @@
+# Auto scaling
+# รับ traffic ให้เยอะขึ้น หากคนใช้งานเยอะขึ้น 
+# Vertical scale -> up cpu,ram ขึ้นในเครื่อง server นั้นๆ ไม่ค่อยตอบโจทย์เพราะเครื่องอาจจะตัน 
+# Horizontal pods autoscaling -> เพิ่มเครื่องใน spec เดียวกัน เพื่อให้เครื่องใช้งานได้เยอะขึ้น
+
+apiVersion: autoscaling/v1 # v1 check cpu only
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hpa-v1
+  namespace: demok8s
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: php-apache # deployment name ที่จะวัด และเฝ้าดูการใช้ resource 
+  minReplicas: 2 # จำนวน pods ที่น้อยที่สุดที่จะสร้างขึ้นมา 
+  maxReplicas: 10 # จำนวน pods ได้สูงสุด 
+  targetCPUUtilizationPercentage: 5 # เปอร์เซ็นต์ความเปลือง CPU ที่จะใช้ในการวัดที่จะขยาย pods 
+
+

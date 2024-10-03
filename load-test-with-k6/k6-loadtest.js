@@ -14,3 +14,5 @@ export default function () {
   http.get("http://localhost:8081");
   sleep(1);
 }
+
+// use `k6 run k6-loadtest.js` to run test
